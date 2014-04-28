@@ -20,7 +20,7 @@ public class ConnectFourGame
     // Internal helpers
     private static final int[] X_DIR = { 0, 1, 1, 1, 0, -1, -1, -1 };
     private static final int[] Y_DIR = { 1, 1, 0, -1, -1, -1, 0, 1 };
-    private static final Direction[] ITERABLE_DIRECTIONS = {Direction.south(), Direction.southEast(), Direction.east(), Direction.northEast()};
+    private static final Direction[] ITERABLE_DIRECTIONS = {Direction.north(), Direction.northEast(), Direction.east(), Direction.southEast()};
 
     public ConnectFourGame(LinkedList<ConnectFourMove> moves)
     {
@@ -65,19 +65,14 @@ public class ConnectFourGame
     private void deepCopyBoard(LinkedList<ConnectFourPlayer>[] _board)
     {
         // Deep copy...
+        init();
         if(_board.length == BOARD_WIDTH)
         {
-            board = new LinkedList[BOARD_WIDTH];
-            for(int i = 0; i < board.length; ++i)
+            for(int i = 0; i < BOARD_WIDTH; ++i)
             {
-                board[i] = new LinkedList<ConnectFourPlayer>();
                 for(ConnectFourPlayer player : _board[i])
                     board[i].add(player);
             }
-        }
-        else
-        {
-            init();
         }
     }
 
@@ -103,19 +98,9 @@ public class ConnectFourGame
      */
     public boolean addMove(ConnectFourMove move)
     {
-        if(move == null || isFull())
-            return finished;
-        // Grab (x,y) coordinates
-        final int x = move.getColumn();
-        final int y = board[x].size();
         // Update board
-        board[x].add(move.player());
-
-        for(Direction dir : ITERABLE_DIRECTIONS)
-        {
-            // Doing logical || will short-circuit calling checkNodeHelper(...)
-            finished = finished || checkNodeHelper(x, y, dir, move.player());
-        }
+        finished = finished || internalCheckMove(move);
+        board[move.getColumn()].add(move.player());
 
         if(finished)
             winningPlayer = move.player();
@@ -123,6 +108,26 @@ public class ConnectFourGame
         return finished;
     }
 
+    public boolean testMove(ConnectFourMove move)
+    {
+        return internalCheckMove(move);
+    }
+    
+    private boolean internalCheckMove(ConnectFourMove move)
+    {
+        if(move == null || isFull())
+            return finished;
+        // Grab (x,y) coordinates
+        final int x = move.getColumn();
+        final int y = board[x].size();
+
+        boolean ret = false;
+        for(Direction dir : ITERABLE_DIRECTIONS)
+            ret = ret || checkNodeHelper(x, y, dir, move.player());
+        
+        return ret;       
+    }
+    
     private boolean checkNodeHelper(int x, int y, Direction direction, ConnectFourPlayer player)
     {
         final int leftIndex = direction.state().ordinal();
@@ -216,7 +221,9 @@ public class ConnectFourGame
         boolean ret = true;
         for(LinkedList<ConnectFourPlayer> list : board)
         {
-            ret = ret && list.size() == BOARD_HEIGHT - 1;
+            if(list == null)
+                continue;
+            ret = ret && (list.size() == BOARD_HEIGHT);
         }
         return ret;
     }

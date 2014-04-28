@@ -8,7 +8,7 @@ public class MonteCarloSearchPure implements MonteCarloAI
 {
     private Random rGen;
     private HashMap<Integer, Double> winProbabilities;
-    private static final int NUM_SIMULATIONS = 1000;
+    private static final int NUM_SIMULATIONS = 1200;
 
     public MonteCarloSearchPure()
     {
@@ -17,12 +17,11 @@ public class MonteCarloSearchPure implements MonteCarloAI
     }
 
     // Assume that this is never passed a full board
-    public ConnectFourMove determineMove(ConnectFourGame _game)
+    public ConnectFourMove determineMove(ConnectFourGame game)
     {
-        ArrayList<ConnectFourMove> moves = _game
-                .getAvailableMoves(ConnectFourPlayer.getAI());
+        final ArrayList<ConnectFourMove> moves = game.getAvailableMoves(ConnectFourPlayer.getAI());
 
-        HashMap<ConnectFourMove, Integer> probabilityMap = new HashMap<ConnectFourMove, Integer>();
+        final HashMap<ConnectFourMove, Integer> probabilityMap = new HashMap<ConnectFourMove, Integer>();
         for(ConnectFourMove move : moves)
             probabilityMap.put(move, 0);
 
@@ -31,7 +30,7 @@ public class MonteCarloSearchPure implements MonteCarloAI
             for(int i = 0; i < NUM_SIMULATIONS; ++i)
             {
                 // Deep copy in
-                if(runSimulation(new ConnectFourGame(_game, move)))
+                if(runSimulation(new ConnectFourGame(game, move)))
                     probabilityMap.put(move, probabilityMap.get(move) + 1);
             }
         }
@@ -58,26 +57,47 @@ public class MonteCarloSearchPure implements MonteCarloAI
         return winProbabilities;
     }
 
-    public boolean runSimulation(ConnectFourGame _game)
+    public boolean runSimulation(ConnectFourGame game)
     {
-        boolean canMove = true;
         // Deep copy game state in
-        ConnectFourGame simulatedGame = new ConnectFourGame(_game);
-        ConnectFourPlayer player = ConnectFourPlayer.getAI();;
-        while(!simulatedGame.isSolved())
+        final ConnectFourGame simulatedGame = new ConnectFourGame(game);
+        ConnectFourPlayer player = ConnectFourPlayer.getHuman();;
+        while(!simulatedGame.isSolved() && !simulatedGame.isFull())
         {
-            ArrayList<ConnectFourMove> moves = simulatedGame.getAvailableMoves(player);
-            canMove = moves.size() != 0;
-            if(!canMove)
+            final ArrayList<ConnectFourMove> myMoves = simulatedGame.getAvailableMoves(player);
+            final ArrayList<ConnectFourMove> enemyMoves = simulatedGame.getAvailableMoves(getOppositePlayer(player));
+            if(myMoves.size() == 0)
                 break;
-
-            int index = rGen.nextInt(moves.size());
-            simulatedGame.addMove(moves.get(index));
+            
+            ConnectFourMove moveToTake = null;
+            // Check if we can take winning move
+            for(ConnectFourMove move : myMoves)
+            {
+                if(simulatedGame.testMove(move))
+                {
+                    moveToTake = move;
+                    break;
+                }
+            }
+            
+            // If we don't have a dick-move, then randoomly pick one
+            if(moveToTake == null)
+            {
+                final int index = rGen.nextInt(myMoves.size());
+                moveToTake = myMoves.get(index);
+            }
+            
+            simulatedGame.addMove(moveToTake);
             // Switch the player back and forth
-            player = (player == ConnectFourPlayer.getAI() ? ConnectFourPlayer.getHuman()
-                    : ConnectFourPlayer.getAI());
+            player = getOppositePlayer(player);
         }
 
         return simulatedGame.winner() == ConnectFourPlayer.getAI();
+    }
+    
+    private ConnectFourPlayer getOppositePlayer(ConnectFourPlayer player)
+    {
+        assert(player == ConnectFourPlayer.getAI() || player == ConnectFourPlayer.getHuman());
+        return (player == ConnectFourPlayer.getAI() ? ConnectFourPlayer.getHuman() : ConnectFourPlayer.getAI());
     }
 }

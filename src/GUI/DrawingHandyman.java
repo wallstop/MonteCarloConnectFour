@@ -79,6 +79,7 @@ public class DrawingHandyman
             case PLAYER_AI:
                 System.out.println("AI wins!");
                 System.exit(1);   
+                break;
             case PLAYER_INVALID:
             default:
                 System.out.println("No one won!");
