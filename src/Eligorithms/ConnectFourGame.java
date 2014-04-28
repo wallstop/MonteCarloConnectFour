@@ -61,7 +61,6 @@ public class ConnectFourGame
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void deepCopyBoard(LinkedList<ConnectFourPlayer>[] _board)
     {
         // Deep copy...

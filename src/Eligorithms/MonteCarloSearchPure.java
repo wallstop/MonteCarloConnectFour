@@ -65,7 +65,6 @@ public class MonteCarloSearchPure implements MonteCarloAI
         while(!simulatedGame.isSolved() && !simulatedGame.isFull())
         {
             final ArrayList<ConnectFourMove> myMoves = simulatedGame.getAvailableMoves(player);
-            final ArrayList<ConnectFourMove> enemyMoves = simulatedGame.getAvailableMoves(getOppositePlayer(player));
             if(myMoves.size() == 0)
                 break;
             
@@ -80,7 +79,7 @@ public class MonteCarloSearchPure implements MonteCarloAI
                 }
             }
             
-            // If we don't have a dick-move, then randoomly pick one
+            // If we don't have a winning move, then randoomly pick one
             if(moveToTake == null)
             {
                 final int index = rGen.nextInt(myMoves.size());
