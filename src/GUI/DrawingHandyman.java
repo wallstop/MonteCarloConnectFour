@@ -30,7 +30,7 @@ public class DrawingHandyman {
 
         // Reset algorithmic variables
         game = new Eligorithms.ConnectFourGame();
-        ai_MCSP = new MonteCarloSearchTree();
+        ai_MCSP.reset();
 
         // Wipe the board visually
         panel.resetBoard();

@@ -55,11 +55,33 @@ public class MonteCarloSearchTreeNode
     {
         ArrayList<ConnectFourMove> moves = node.game.getAvailableMoves(player);
         node.children = new ArrayList<MonteCarloSearchTreeNode>();
+        // Check for winning move (prevents stupid game states)
+        boolean foundWinningMove = false;
+        MonteCarloSearchTreeNode winningNode = null;
         for(ConnectFourMove move : moves)
         {
             if(move == null)
                 continue;
-            node.children.add(new MonteCarloSearchTreeNode(node, move));       
+            if(node.game.testMove(move))
+            {
+                foundWinningMove = true;
+                winningNode = new MonteCarloSearchTreeNode(node, move);
+                break;
+            }  
+        }
+        if(foundWinningMove)
+        {
+            node.children.add(winningNode);   
+        }
+        else
+        {
+            // If no winning move found, add all possible children
+            for(ConnectFourMove move : moves)
+            {
+                if(move == null)
+                    continue;
+                node.children.add(new MonteCarloSearchTreeNode(node, move));      
+            }
         }
     }
     

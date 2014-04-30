@@ -51,6 +51,11 @@ public class MonteCarloSearchPure implements MonteCarloAI
 
         return ret;
     }
+    
+    public void reset()
+    {
+        winProbabilities.clear();
+    }
 
     public HashMap<Integer, Double> getProbabilities()
     {

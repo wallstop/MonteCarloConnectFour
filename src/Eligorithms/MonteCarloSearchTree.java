@@ -19,7 +19,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
     private MonteCarloSearchTreeNode current;
     
     // Search time in nano seconds allowed (tenth of a second)
-    private static final long MAX_SEARCH_TIME = 1000000000l;
+    private static final long MAX_SEARCH_TIME = 10000000l;
 
     public MonteCarloSearchTree()
     {
@@ -93,6 +93,11 @@ public class MonteCarloSearchTree implements MonteCarloAI
         
         assert(bestMove != null);
         return bestMove;
+    }
+    
+    public void reset()
+    {
+        current = root;
     }
 
     private static void doWork(MonteCarloSearchTree tree, MonteCarloSearchTreeNode parent)
