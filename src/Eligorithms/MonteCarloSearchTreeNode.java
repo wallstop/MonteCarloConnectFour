@@ -88,10 +88,11 @@ public class MonteCarloSearchTreeNode
     // PLEASE KNOW WHAT YOU'RE DOING WHEN YOU CALL THIS
     public void generateChildren()
     {
-        generateChildren(this, move.player().opposite()); 
+        if(needToGenerateChildren())
+            generateChildren(this, move.player().opposite()); 
     }
     
-    public boolean needToGenerateChildren()
+    private boolean needToGenerateChildren()
     {
         return children == null;
     }

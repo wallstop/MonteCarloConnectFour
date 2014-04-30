@@ -18,7 +18,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
     private final MonteCarloSearchTreeNode root;
     private MonteCarloSearchTreeNode current;
     
-    // Search time in nano seconds allowed (tenth of a second)
+    // Search time in nano seconds allowed (currently 10 ms)
     private static final long MAX_SEARCH_TIME = 10000000l;
 
     public MonteCarloSearchTree()
@@ -52,8 +52,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
     {
         updateGameState(game);
         final MonteCarloSearchTree tree = this;
-        if(current.needToGenerateChildren())
-            current.generateChildren();
+        current.generateChildren();
         for(final MonteCarloSearchTreeNode node : current.children())
         {
             // Spawn some threads and stuff
@@ -76,6 +75,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
         for(MonteCarloSearchTreeNode node : current.children())
         {
             probabilities.put(node.move().getColumn(), node.score());
+            // Here we could work off of probabilities or num wins, your choice
             if(node.wins() > bestScore)
             {
                 current = node;
@@ -111,8 +111,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
             MonteCarloSearchTreeNode node = stack.pop();
             if(node == null)
                 continue;
-            if(node.needToGenerateChildren())
-                node.generateChildren();
+            node.generateChildren();
             for(MonteCarloSearchTreeNode child : node.children())
             {
                 stack.push(child);
