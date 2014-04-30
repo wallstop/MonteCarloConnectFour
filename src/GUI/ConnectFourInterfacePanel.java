@@ -9,8 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
-public class ConnectFourInterfacePanel extends JPanel implements Runnable
-{
+public class ConnectFourInterfacePanel extends JPanel implements Runnable {
 
     // Drawing variables
     private final BufferedImage background, top, overlays;
@@ -28,8 +27,7 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
     public final int width, height, columns, columnWidth;
 
     // Overloaded constructor
-    public ConnectFourInterfacePanel(int panelWidth, int panelHeight, int columns)
-    {
+    public ConnectFourInterfacePanel(int panelWidth, int panelHeight, int columns) {
         // Init Java2D layer
         // Create the canvas in the JPanel
         int windowWidth = panelWidth;
@@ -49,8 +47,7 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
     }
 
     // Draw board for user to click on
-    private void initBoard()
-    {
+    private void initBoard() {
         Graphics2D g2d = top.createGraphics();
 
         g2d.setColor(lightGray);
@@ -59,23 +56,20 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
         g2d.setColor(lightBlue);
         BasicStroke b = new BasicStroke(3f);
         g2d.setStroke(b);
-        for(int i = 0; i < columns; i++)
-        {
+        for (int i = 0; i < columns; i++) {
             g2d.drawLine(width / columns * (i + 1), 0, width / columns * (i + 1), height);
         }
     }
 
     // Thread running - not certain what this method should contain
     @Override
-    public void run()
-    {
+    public void run() {
         repaint();
     }
 
     // JPanel/Canvas command that draws being overwritten here
     @Override
-    public void paintComponent(Graphics g)
-    {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         g.drawImage(background, 0, 0, null);
@@ -86,15 +80,13 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
     }
 
     // Redraw all graphics
-    public void resetBoard()
-    {
+    public void resetBoard() {
         initBoard();
         repaint();
     }
 
     // Erase any overlays on the board
-    public void eraseOverlays()
-    {
+    public void eraseOverlays() {
         Graphics2D g2d = overlays.createGraphics();
         Composite comp = g2d.getComposite();
         // Set the composite to clear, in order to 'erase'
@@ -104,8 +96,7 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
     }
 
     // Highlight a column the user is mousing over
-    public void highlightColumn(int column)
-    {
+    public void highlightColumn(int column) {
         Graphics2D g2d = overlays.createGraphics();
         BasicStroke s = new BasicStroke(1f);
         g2d.setStroke(s);
@@ -118,8 +109,7 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
     }
 
     // Fill a rectangle, incremented slightly SE and cropped to fit
-    public void paintMove(int column, int row, boolean isPlayer)
-    {
+    public void paintMove(int column, int row, boolean isPlayer) {
         Color c = isPlayer ? Color.GREEN : Color.RED;
         Graphics2D g2d = top.createGraphics();
         g2d.setColor(c);
@@ -127,7 +117,7 @@ public class ConnectFourInterfacePanel extends JPanel implements Runnable
         int d = 91;
         int space = 5;
         int x = columnWidth * column + 5;
-        int y = getHeight() - ((d + space) * row) - d - space;
+        int y = getHeight() - ((d + space) * row) - space;
         System.out.printf("Drawing move @%d, %d a request for %d, %d.\n", x, y, column, row);
         g2d.fillOval(x, y, d, d);
         repaint();

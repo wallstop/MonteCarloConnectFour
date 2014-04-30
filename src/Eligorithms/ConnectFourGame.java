@@ -16,6 +16,7 @@ public class ConnectFourGame
     private boolean finished = false;
     private ConnectFourPlayer winningPlayer = ConnectFourPlayer.getInvalid();
     private LinkedList<ConnectFourPlayer> board[];
+    private LinkedList<ConnectFourMove> moveList;
     
     // Internal helpers
     private static final int[] X_DIR = { 0, 1, 1, 1, 0, -1, -1, -1 };
@@ -46,12 +47,14 @@ public class ConnectFourGame
     public ConnectFourGame(ConnectFourGame game, ConnectFourMove move)
     {
         deepCopyBoard(game.board);
+        deepCopyMoves(game.moveList);
         addMove(move);
     }
 
     public ConnectFourGame(ConnectFourGame game)
     {
         deepCopyBoard(game.board);
+        deepCopyMoves(game.moveList);
         winningPlayer = game.winningPlayer;
         finished = game.finished;
     }
@@ -59,6 +62,12 @@ public class ConnectFourGame
     public ConnectFourGame()
     {
         init();
+    }
+    
+    private void deepCopyMoves(LinkedList<ConnectFourMove> moves)
+    {
+        for(ConnectFourMove move : moves)
+            moveList.add(move);
     }
 
     private void deepCopyBoard(LinkedList<ConnectFourPlayer>[] _board)
@@ -79,6 +88,7 @@ public class ConnectFourGame
     private void init()
     {
         board = new LinkedList[BOARD_WIDTH];
+        moveList = new LinkedList<ConnectFourMove>();
         for(int i = 0; i < BOARD_WIDTH; ++i)
         {
             board[i] = new LinkedList<ConnectFourPlayer>();
@@ -88,8 +98,13 @@ public class ConnectFourGame
     private void initFromMoves(LinkedList<ConnectFourMove> moves)
     {
         init();
+        deepCopyMoves(moves);
         for(ConnectFourMove move : moves)
+        {
+            if(move == null)
+                continue;
             board[move.getColumn()].add(move.player());
+        }
     }
 
     /*
@@ -98,8 +113,11 @@ public class ConnectFourGame
     public boolean addMove(ConnectFourMove move)
     {
         // Update board
+        if(move == null)
+            return finished;
         finished = finished || internalCheckMove(move);
         board[move.getColumn()].add(move.player());
+        moveList.add(move);
 
         if(finished)
             winningPlayer = move.player();
@@ -114,7 +132,7 @@ public class ConnectFourGame
     
     private boolean internalCheckMove(ConnectFourMove move)
     {
-        if(move == null || isFull())
+        if(move == null)
             return finished;
         // Grab (x,y) coordinates
         final int x = move.getColumn();
@@ -150,12 +168,12 @@ public class ConnectFourGame
         return count;
     }
 
-    ArrayList<ConnectFourMove> getAvailableMoves()
+    public ArrayList<ConnectFourMove> getAvailableMoves()
     {
         return getAvailableMoves(ConnectFourPlayer.getInvalid());
     }
 
-    ArrayList<ConnectFourMove> getAvailableMoves(ConnectFourPlayer player)
+    public ArrayList<ConnectFourMove> getAvailableMoves(ConnectFourPlayer player)
     {
         ArrayList<ConnectFourMove> ret = new ArrayList<ConnectFourMove>();
         if(finished)
@@ -172,6 +190,11 @@ public class ConnectFourGame
         }
 
         return ret;
+    }
+    
+    public ConnectFourMove getLastMove()
+    {
+        return (moveList != null && moveList.size() > 0) ? moveList.getLast() : null;
     }
 
     public boolean isSolved()

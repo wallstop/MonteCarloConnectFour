@@ -34,6 +34,21 @@ public class ConnectFourPlayer
         return HUMAN;
     }
     
+    public ConnectFourPlayer opposite()
+    {
+        switch(owner)
+        {
+        case PLAYER_INVALID:
+            return INVALID;
+        case PLAYER_AI:
+            return HUMAN;
+        case PLAYER_HUMAN:
+            return AI;
+        default:
+            return null;
+        }
+    }
+    
     public Owner owner()
     {
         return owner;

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class MonteCarloSearchTreeNode
 {
     private ArrayList<MonteCarloSearchTreeNode> children;
-    private final MonteCarloSearchTreeNode parent;    
-    private final ConnectFourGame game;
-    private final ConnectFourMove move;
+    private MonteCarloSearchTreeNode parent;    
+    private ConnectFourGame game;
+    private ConnectFourMove move;
     private int wins;
     private int possibilities;
     
@@ -18,7 +18,7 @@ public class MonteCarloSearchTreeNode
         possibilities = 0;
         move = null;
         game = new ConnectFourGame();
-        generateChildren();
+        children = null;
     }
     
     public MonteCarloSearchTreeNode(MonteCarloSearchTreeNode _parent, ConnectFourMove _move)
@@ -27,27 +27,51 @@ public class MonteCarloSearchTreeNode
         possibilities = 0;
         parent = _parent;
         move = _move;
-        game = new ConnectFourGame(this);
+        game = new ConnectFourGame(_parent);
+        if(move == null)
+        {
+            boolean breakpoint = false;
+            if(breakpoint);
+        }
+        game.addMove(_move);
         if(game.isSolved() || game.isFull())
         {
-            children = new ArrayList<MonteCarloSearchTreeNode>();    // better than null
+            children = new ArrayList<MonteCarloSearchTreeNode>();
             if(game.winner() == ConnectFourPlayer.getAI())
                 updateWithWin();
             else
                 updateWithLoss();
         }         
-        else
+    }
+    
+    public static MonteCarloSearchTreeNode getRoot(ConnectFourPlayer player)
+    {
+        MonteCarloSearchTreeNode ret = new MonteCarloSearchTreeNode(null);
+        generateChildren(ret, player);        
+        return ret;        
+    }
+    
+    private static void generateChildren(MonteCarloSearchTreeNode node, ConnectFourPlayer player)
+    {
+        ArrayList<ConnectFourMove> moves = node.game.getAvailableMoves(player);
+        node.children = new ArrayList<MonteCarloSearchTreeNode>();
+        for(ConnectFourMove move : moves)
         {
-            generateChildren();
+            if(move == null)
+                continue;
+            node.children.add(new MonteCarloSearchTreeNode(node, move));       
         }
     }
     
-    private void generateChildren()
+    // PLEASE KNOW WHAT YOU'RE DOING WHEN YOU CALL THIS
+    public void generateChildren()
     {
-        ArrayList<ConnectFourMove> moves = game.getAvailableMoves(ConnectFourPlayer.getAI());
-        children = new ArrayList<MonteCarloSearchTreeNode>();
-        for(ConnectFourMove move : moves)
-            children.add(new MonteCarloSearchTreeNode(this, move));      
+        generateChildren(this, move.player().opposite()); 
+    }
+    
+    public boolean needToGenerateChildren()
+    {
+        return children == null;
     }
     
     public void updateWithWin()

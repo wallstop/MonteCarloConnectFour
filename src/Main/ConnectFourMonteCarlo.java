@@ -4,11 +4,9 @@
  */
 package Main;
 
-public class ConnectFourMonteCarlo
-{
+public class ConnectFourMonteCarlo {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         new GUI.ConnectFourInterfaceMenu().setVisible(true);
     }
 }

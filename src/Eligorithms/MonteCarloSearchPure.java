@@ -61,6 +61,7 @@ public class MonteCarloSearchPure implements MonteCarloAI
     {
         // Deep copy game state in
         final ConnectFourGame simulatedGame = new ConnectFourGame(game);
+        // The AI made the move that led to this board state, so we simulate the "human" taking the first move
         ConnectFourPlayer player = ConnectFourPlayer.getHuman();;
         while(!simulatedGame.isSolved() && !simulatedGame.isFull())
         {
@@ -79,7 +80,7 @@ public class MonteCarloSearchPure implements MonteCarloAI
                 }
             }
             
-            // If we don't have a winning move, then randoomly pick one
+            // If we don't have a winning move, then randomly pick one
             if(moveToTake == null)
             {
                 final int index = rGen.nextInt(myMoves.size());
@@ -88,15 +89,9 @@ public class MonteCarloSearchPure implements MonteCarloAI
             
             simulatedGame.addMove(moveToTake);
             // Switch the player back and forth
-            player = getOppositePlayer(player);
+            player = player.opposite();
         }
 
         return simulatedGame.winner() == ConnectFourPlayer.getAI();
-    }
-    
-    private ConnectFourPlayer getOppositePlayer(ConnectFourPlayer player)
-    {
-        assert(player == ConnectFourPlayer.getAI() || player == ConnectFourPlayer.getHuman());
-        return (player == ConnectFourPlayer.getAI() ? ConnectFourPlayer.getHuman() : ConnectFourPlayer.getAI());
     }
 }
