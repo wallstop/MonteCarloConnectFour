@@ -13,7 +13,7 @@ public class DrawingHandyman
 
     // Algorithmic variables
     private ConnectFourGame game = new Eligorithms.ConnectFourGame();
-    private MonteCarloAI ai_MCSP = /* new MonteCarloSearchPure(); */new MonteCarloSearchTree();
+    private MonteCarloAI ai_MCSP = new MonteCarloSearchPure(); /* new MonteCarloSearchTree() */;
 
     public DrawingHandyman(int maxTokens)
     {
