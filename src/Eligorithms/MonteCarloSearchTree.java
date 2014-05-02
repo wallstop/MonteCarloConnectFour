@@ -67,8 +67,9 @@ public class MonteCarloSearchTree implements MonteCarloAI
         }
         
         final long startTime = System.nanoTime();
+        // "Good enough" barrier, our tree's thread safe, and we don't reallllly care if all of our threads are done or not
         while(System.nanoTime() - startTime <= MAX_SEARCH_TIME)
-            ;   //Spin
+            ; // Spin
         
         int bestScore = -1;
         ConnectFourMove bestMove = null;
