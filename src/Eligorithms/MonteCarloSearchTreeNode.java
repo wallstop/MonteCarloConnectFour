@@ -28,11 +28,7 @@ public class MonteCarloSearchTreeNode
         parent = _parent;
         move = _move;
         game = new ConnectFourGame(_parent);
-        if(move == null)
-        {
-            boolean breakpoint = false;
-            if(breakpoint);
-        }
+        assert(move != null);
         game.addMove(_move);
         if(game.isSolved() || game.isFull())
         {
@@ -57,7 +53,6 @@ public class MonteCarloSearchTreeNode
         node.children = new ArrayList<MonteCarloSearchTreeNode>();
         // Check for winning move (prevents stupid game states)
         boolean foundWinningMove = false;
-        MonteCarloSearchTreeNode winningNode = null;
         for(ConnectFourMove move : moves)
         {
             if(move == null)
@@ -65,15 +60,12 @@ public class MonteCarloSearchTreeNode
             if(node.game.testMove(move))
             {
                 foundWinningMove = true;
-                winningNode = new MonteCarloSearchTreeNode(node, move);
+                node.children.add(new MonteCarloSearchTreeNode(node, move));
                 break;
             }  
         }
-        if(foundWinningMove)
-        {
-            node.children.add(winningNode);   
-        }
-        else
+
+        if(!foundWinningMove)
         {
             // If no winning move found, add all possible children
             for(ConnectFourMove move : moves)
@@ -84,8 +76,7 @@ public class MonteCarloSearchTreeNode
             }
         }
     }
-    
-    // PLEASE KNOW WHAT YOU'RE DOING WHEN YOU CALL THIS
+
     public void generateChildren()
     {
         if(needToGenerateChildren())

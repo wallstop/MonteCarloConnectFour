@@ -84,6 +84,7 @@ public class MonteCarloSearchTree implements MonteCarloAI
             }            
         }
         
+        // If we don't have a best move, then grab a random one
         if(bestMove == null)
         {
             final int maxSize = current.children().size();
