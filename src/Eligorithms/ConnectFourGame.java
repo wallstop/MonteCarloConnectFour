@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ConnectFourGame
 {
-    
+
     // Board constraints
     private static final int BOARD_WIDTH = 7;
     private static final int BOARD_HEIGHT = 6;
@@ -17,17 +17,18 @@ public class ConnectFourGame
     private ConnectFourPlayer winningPlayer = ConnectFourPlayer.getInvalid();
     private LinkedList<ConnectFourPlayer> board[];
     private LinkedList<ConnectFourMove> moveList;
-    
+
     // Internal helpers
     private static final int[] X_DIR = { 0, 1, 1, 1, 0, -1, -1, -1 };
     private static final int[] Y_DIR = { 1, 1, 0, -1, -1, -1, 0, 1 };
-    private static final Direction[] ITERABLE_DIRECTIONS = {Direction.north(), Direction.northEast(), Direction.east(), Direction.southEast()};
+    private static final Direction[] ITERABLE_DIRECTIONS = { Direction.north(),
+            Direction.northEast(), Direction.east(), Direction.southEast() };
 
     public ConnectFourGame(LinkedList<ConnectFourMove> moves)
     {
         initFromMoves(moves);
     }
-    
+
     public ConnectFourGame(MonteCarloSearchTreeNode leafNode)
     {
         // Walk up the tree
@@ -38,12 +39,12 @@ public class ConnectFourGame
             moves.add(temp.move());
             temp = temp.parent();
         }
-        
+
         Collections.reverse(moves);
-        
+
         initFromMoves(moves);
     }
-    
+
     public ConnectFourGame(ConnectFourGame game, ConnectFourMove move)
     {
         deepCopyBoard(game.board);
@@ -63,7 +64,7 @@ public class ConnectFourGame
     {
         init();
     }
-    
+
     private void deepCopyMoves(LinkedList<ConnectFourMove> moves)
     {
         for(ConnectFourMove move : moves)
@@ -94,7 +95,7 @@ public class ConnectFourGame
             board[i] = new LinkedList<ConnectFourPlayer>();
         }
     }
-    
+
     private void initFromMoves(LinkedList<ConnectFourMove> moves)
     {
         init();
@@ -121,7 +122,7 @@ public class ConnectFourGame
 
         if(finished)
             winningPlayer = move.player();
-        
+
         return finished;
     }
 
@@ -129,7 +130,7 @@ public class ConnectFourGame
     {
         return internalCheckMove(move);
     }
-    
+
     private boolean internalCheckMove(ConnectFourMove move)
     {
         if(move == null)
@@ -141,25 +142,25 @@ public class ConnectFourGame
         boolean ret = false;
         for(Direction dir : ITERABLE_DIRECTIONS)
             ret = ret || checkNodeHelper(x, y, dir, move.player());
-        
-        return ret;       
+
+        return ret;
     }
-    
+
     private boolean checkNodeHelper(int x, int y, Direction direction, ConnectFourPlayer player)
     {
         final int leftIndex = direction.state().ordinal();
-        final int rightIndex = direction.opposite().state().ordinal();        
+        final int rightIndex = direction.opposite().state().ordinal();
         final int left = checkNode(x + X_DIR[leftIndex], y + Y_DIR[leftIndex], direction, player, 0);
-        final int right = checkNode(x + X_DIR[rightIndex], y + Y_DIR[rightIndex], direction.opposite(), player, 0);
+        final int right = checkNode(x + X_DIR[rightIndex], y + Y_DIR[rightIndex],
+                direction.opposite(), player, 0);
         return left + right + 1 >= NUM_TO_WIN;
     }
 
-    private int checkNode(int x, int y, Direction direction, ConnectFourPlayer player,
-            int count)
+    private int checkNode(int x, int y, Direction direction, ConnectFourPlayer player, int count)
     {
-        if(count == (NUM_TO_WIN - 1))  // bail early
+        if(count == (NUM_TO_WIN - 1)) // bail early
             return count;
-        
+
         final int index = direction.state().ordinal();
         // If we're in the board and found a matching player, recurse
         if(x >= 0 && x < board.length && board[x].size() > y && y >= 0 && board[x].get(y) == player)
@@ -191,7 +192,7 @@ public class ConnectFourGame
 
         return ret;
     }
-    
+
     public ConnectFourMove getLastMove()
     {
         return (moveList != null && moveList.size() > 0) ? moveList.getLast() : null;
@@ -239,7 +240,7 @@ public class ConnectFourGame
     {
         if(finished)
             return true;
-        
+
         boolean ret = true;
         for(LinkedList<ConnectFourPlayer> list : board)
         {

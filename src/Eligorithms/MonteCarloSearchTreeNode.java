@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class MonteCarloSearchTreeNode
 {
     private ArrayList<MonteCarloSearchTreeNode> children;
-    private MonteCarloSearchTreeNode parent;    
+    private MonteCarloSearchTreeNode parent;
     private ConnectFourGame game;
     private ConnectFourMove move;
     private int wins;
     private int possibilities;
-    
+
     public MonteCarloSearchTreeNode(MonteCarloSearchTreeNode _parent)
     {
         parent = _parent;
@@ -20,7 +20,7 @@ public class MonteCarloSearchTreeNode
         game = new ConnectFourGame();
         children = null;
     }
-    
+
     public MonteCarloSearchTreeNode(MonteCarloSearchTreeNode _parent, ConnectFourMove _move)
     {
         wins = 0;
@@ -28,7 +28,7 @@ public class MonteCarloSearchTreeNode
         parent = _parent;
         move = _move;
         game = new ConnectFourGame(_parent);
-        assert(move != null);
+        assert (move != null);
         game.addMove(_move);
         if(game.isSolved() || game.isFull())
         {
@@ -37,16 +37,16 @@ public class MonteCarloSearchTreeNode
                 updateWithWin();
             else
                 updateWithLoss();
-        }         
+        }
     }
-    
+
     public static MonteCarloSearchTreeNode getRoot(ConnectFourPlayer player)
     {
         MonteCarloSearchTreeNode ret = new MonteCarloSearchTreeNode(null);
-        generateChildren(ret, player);        
-        return ret;        
+        generateChildren(ret, player);
+        return ret;
     }
-    
+
     private static void generateChildren(MonteCarloSearchTreeNode node, ConnectFourPlayer player)
     {
         ArrayList<ConnectFourMove> moves = node.game.getAvailableMoves(player);
@@ -62,7 +62,7 @@ public class MonteCarloSearchTreeNode
                 foundWinningMove = true;
                 node.children.add(new MonteCarloSearchTreeNode(node, move));
                 break;
-            }  
+            }
         }
 
         if(!foundWinningMove)
@@ -72,7 +72,7 @@ public class MonteCarloSearchTreeNode
             {
                 if(move == null)
                     continue;
-                node.children.add(new MonteCarloSearchTreeNode(node, move));      
+                node.children.add(new MonteCarloSearchTreeNode(node, move));
             }
         }
     }
@@ -80,14 +80,14 @@ public class MonteCarloSearchTreeNode
     public void generateChildren()
     {
         if(needToGenerateChildren())
-            generateChildren(this, move.player().opposite()); 
+            generateChildren(this, move.player().opposite());
     }
-    
+
     private boolean needToGenerateChildren()
     {
         return children == null;
     }
-    
+
     public void updateWithWin()
     {
         ++wins;
@@ -95,42 +95,42 @@ public class MonteCarloSearchTreeNode
         if(parent != null)
             parent.updateWithWin();
     }
-    
+
     public void updateWithLoss()
     {
         ++possibilities;
         if(parent != null)
             parent.updateWithLoss();
     }
-    
+
     public double score()
     {
-        return (double)wins / (double)possibilities;
+        return (double) wins / (double) possibilities;
     }
-    
+
     public int wins()
     {
         return wins;
     }
-    
+
     public int possibilities()
     {
         return possibilities;
     }
-    
+
     public ArrayList<MonteCarloSearchTreeNode> children()
     {
         return children;
     }
-    
+
     public MonteCarloSearchTreeNode parent()
     {
         return parent;
     }
-    
+
     public ConnectFourMove move()
     {
         return move;
     }
-    
+
 }

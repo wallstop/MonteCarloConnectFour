@@ -11,7 +11,8 @@ public class ConnectFourMove
     public ConnectFourMove(int _index)
     {
         index = _index;
-        player = ConnectFourPlayer.getInvalid();;
+        player = ConnectFourPlayer.getInvalid();
+        ;
     }
 
     public ConnectFourMove(int _index, ConnectFourPlayer _player)

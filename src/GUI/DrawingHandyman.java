@@ -4,7 +4,8 @@ import Eligorithms.*;
 
 import java.util.HashMap;
 
-public class DrawingHandyman {
+public class DrawingHandyman
+{
 
     private final ConnectFourInterfacePanel panel = ConnectFourInterfaceMenu.interfacePanel;
     private final HashMap<Integer, Integer> tokens = new HashMap<Integer, Integer>();
@@ -12,19 +13,23 @@ public class DrawingHandyman {
 
     // Algorithmic variables
     private ConnectFourGame game = new Eligorithms.ConnectFourGame();
-    private MonteCarloAI ai_MCSP = /*new MonteCarloSearchPure(); */  new MonteCarloSearchTree() ;
+    private MonteCarloAI ai_MCSP = /* new MonteCarloSearchPure(); */new MonteCarloSearchTree();
 
-    public DrawingHandyman(int maxTokens) {
+    public DrawingHandyman(int maxTokens)
+    {
         this.maxTokens = maxTokens;
-        for (int i = 0; i < panel.columns; i++) {
+        for(int i = 0; i < panel.columns; i++)
+        {
             tokens.put(i, 0);
         }
     }
 
     // Wipe the board
-    public void requestReset() {
+    public void requestReset()
+    {
         // Reset internal representation of game
-        for (int i = 0; i < panel.columns; i++) {
+        for(int i = 0; i < panel.columns; i++)
+        {
             tokens.put(i, 0);
         }
 
@@ -36,12 +41,14 @@ public class DrawingHandyman {
         panel.resetBoard();
     }
 
-    public void requestColumnHighlight(int x, int y) {
+    public void requestColumnHighlight(int x, int y)
+    {
         // Clear any previously lit columns location
         panel.eraseOverlays();
 
         // Catch drag events that move too far
-        if (x < panel.getWidth() && y < panel.getHeight() && x >= 0 && y >= 0) {
+        if(x < panel.getWidth() && y < panel.getHeight() && x >= 0 && y >= 0)
+        {
 
             // Convert pixels to coords
             int column = x / panel.columnWidth + 1;
@@ -50,7 +57,8 @@ public class DrawingHandyman {
     }
 
     // Translate and request a move event to be drawn
-    public void requestMove(int x, int y, boolean isPlayer) {
+    public void requestMove(int x, int y, boolean isPlayer)
+    {
         // Clear any previously lit columns location
         panel.eraseOverlays();
 
@@ -61,44 +69,53 @@ public class DrawingHandyman {
         System.out.printf("Currently %d.", i);
         System.out.println("");
 
-        if (i < maxTokens) {
+        if(i < maxTokens)
+        {
             i++;
             tokens.put(column, i);
 
             panel.paintMove(column, i, isPlayer);
 
-            if (isPlayer) {
+            if(isPlayer)
+            {
                 // Player moves require responses from the algorithm
                 generateResponse(column);
             }
         }
     }
 
-    // Check to ensure board has moves available     
-    private boolean areMovesLeft() {
-        if (game.isSolved() || game.isFull()) {
-            switch (game.winner().owner()) {
-                case PLAYER_HUMAN:
-                    System.out.println("Player wins!");
-                    break;
-                case PLAYER_AI:
-                    System.out.println("AI wins!");
-                    break;
-                case PLAYER_INVALID:
-                default:
-                    System.out.println("No one won!");
-                    break;
+    // Check to ensure board has moves available
+    private boolean areMovesLeft()
+    {
+        if(game.isSolved() || game.isFull())
+        {
+            switch(game.winner().owner())
+            {
+            case PLAYER_HUMAN:
+                System.out.println("Player wins!");
+                break;
+            case PLAYER_AI:
+                System.out.println("AI wins!");
+                break;
+            case PLAYER_INVALID:
+            default:
+                System.out.println("No one won!");
+                break;
             }
             return false;
-        } else {
+        }
+        else
+        {
             return true;
         }
     }
 
-    private void generateResponse(int column) {
+    private void generateResponse(int column)
+    {
         game.addMove(new ConnectFourMove(column, ConnectFourPlayer.getHuman()));
 
-        if (areMovesLeft()) {
+        if(areMovesLeft())
+        {
 
             // Add the next move
             ConnectFourMove nextMove = ai_MCSP.determineMove(game);
@@ -117,10 +134,13 @@ public class DrawingHandyman {
             // Write the rationale for the decision
             ConnectFourInterfaceMenu.updatePercentages(ai_MCSP.getProbabilities());
 
-            if (!areMovesLeft()) {
+            if(!areMovesLeft())
+            {
                 ConnectFourInterfaceMenu.endGame();
             }
-        } else {
+        }
+        else
+        {
             ConnectFourInterfaceMenu.endGame();
         }
     }
